@@ -62,10 +62,10 @@ public:
    
     filter_object(Input input_, UnaryPredicate up):
         UnaryPredicate(up), input(input_), endInputIter(std::end(input)) {};
-    auto begin() const {return Iterator{*this,std::begin(input)};} 
-    auto end() const  {return Iterator{*this, std::end(input)};}
-    auto rbegin() const {return Iterator{*this,std::rbegin(input)};} 
-    auto rend() const  {return Iterator{*this, std::rend(input)};}
+    auto begin() {return Iterator{*this,std::begin(input)};} 
+    auto end() {return Iterator{*this, std::end(input)};}
+    auto rbegin() {return Iterator{*this,std::rbegin(input)};} 
+    auto rend() {return Iterator{*this, std::rend(input)};}
 private:
     Input input;
     decltype(std::end(input)) endInputIter; 
@@ -100,41 +100,45 @@ struct filter: UnaryPredicate{
 //-----DROP------------------
 //don't take first n elements
 struct drop{
-    drop(int drop_n_values_): drop_n_values(drop_n_values_), counter(std::make_shared<int>(1)) {};
-    bool operator()(... ) const {return (*counter)++ > drop_n_values;}
+    drop(int drop_n_values_): drop_n_values(drop_n_values_), counter(1) {};
+    template<typename T>
+    bool operator()(T) {return counter++ > drop_n_values;}
 private:
     int drop_n_values;
-    std::shared_ptr<int> counter;
+    int counter;
 };
 
 //-----Take------------------
 //take first n elements
 struct take{
-    take(int take_n_values_): take_n_values(take_n_values_), counter(std::make_shared<int>(0)) {};
-    bool operator()(... ) const {return (*counter)++ < take_n_values;}
+    take(int take_n_values_): take_n_values(take_n_values_), counter(0) {};
+    template<typename T>
+    bool operator()(T) {return counter++ < take_n_values;}
 private:
     int take_n_values;
-    std::shared_ptr<int> counter;
+    int counter;
 };
 
 //-----Slice------------------
 //take ranges [n_begin, n_end)
 struct slice{
-    slice(int n_begin_, int n_end_): n_begin(n_begin_), n_end(n_end_), counter(std::make_shared<int>(0)) {};
-    bool operator()(... ) const {
-        auto temp = *counter;
-        (*counter)++;
+    slice(int n_begin_, int n_end_): n_begin(n_begin_), n_end(n_end_), counter(0) {};
+    template<typename T>
+    bool operator()(T) {
+        auto temp = counter;
+        counter++;
         return  temp >= n_begin && temp < n_end;
     }
 private:
     int n_begin;
     int n_end;
-    std::shared_ptr<int> counter;
+    int counter;
 };
 
 //-----Reverse------------------
 struct reverse{
-    bool operator()(... ) const {;
+    template<typename T>
+    bool operator()(T) const {;
         return  1;
     }
 };
