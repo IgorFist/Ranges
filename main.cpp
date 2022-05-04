@@ -128,4 +128,15 @@ BOOST_AUTO_TEST_CASE(test_ranges_2_filters_reverse_drop)
     BOOST_CHECK((v == std::vector<int>{99,99,99,99,7,5,8}));
 }
 
+BOOST_AUTO_TEST_CASE(test_ranges_2_drop)
+{
+    std::vector<int> v{3,1,4,6,7,5,8};
+    std::vector<int> v_filtered;
+
+    for(auto item: v | ranges::drop(2) | ranges::drop(1))
+        v_filtered.push_back(item);
+
+    BOOST_CHECK((v_filtered == std::vector<int>{6,7,5,8}));
+}
+
 BOOST_AUTO_TEST_SUITE_END()
