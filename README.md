@@ -1,2 +1,2 @@
 # ranges
-This is my little version ranges library from C++20.
+This repo is my version ranges library from C++20.
